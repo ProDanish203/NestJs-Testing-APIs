@@ -11,6 +11,7 @@ model User {
   id       String @unique @default(uuid())
   name     String
   email    String @unique
+  role     Role   @default(USER)
   password String
   posts    Post[]
 }
@@ -20,4 +21,9 @@ model Post {
   content  String
   author   User   @relation(fields: [authorId], references: [id])
   authorId String
+}
+
+enum Role {
+  USER
+  ADMIN
 }
