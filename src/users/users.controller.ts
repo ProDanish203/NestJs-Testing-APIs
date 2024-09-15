@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,
@@ -9,21 +8,10 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto, UpdateUserDto, LoginDto } from './dto/user.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
-  @Post('register')
-  create(@Body(ValidationPipe) createUserDto: CreateUserDto) {
-    return this.usersService.register(createUserDto);
-  }
-
-  @Post()
-  login(@Body(ValidationPipe) loginDto: LoginDto) {
-    return this.usersService.login(loginDto);
-  }
 
   @Get()
   findAll() {
@@ -36,10 +24,7 @@ export class UsersController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body(ValidationPipe) updateUserDto: UpdateUserDto,
-  ) {
+  update(@Param('id') id: string, @Body(ValidationPipe) updateUserDto: any) {
     return this.usersService.update(id, updateUserDto);
   }
 
