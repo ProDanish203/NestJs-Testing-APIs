@@ -5,10 +5,11 @@ import {
   Res,
   ValidationPipe,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto, RegisterDto } from './dto/auth.dto';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { Roles } from 'common/decorators/roles.decorator';
 import { ROLES } from 'common/constants';
@@ -33,7 +34,10 @@ export class AuthController {
   @Post('logout')
   @UseGuards(AuthGuard)
   @Roles(...Object.values(ROLES))
-  logout(@Res({ passthrough: true }) response: Response) {
-    return this.authService.logout(response);
+  logout(
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    return this.authService.logout(request, response);
   }
 }

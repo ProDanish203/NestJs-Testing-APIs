@@ -4,7 +4,7 @@ import { throwError } from 'common/helpers/helpers';
 import { PrismaService } from 'src/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -59,14 +59,15 @@ export class AuthService {
         },
       });
 
-      if (!userExists) throwError('Invalid Credentials', HttpStatus.NOT_FOUND);
+      if (!userExists)
+        throw throwError('Invalid Credentials', HttpStatus.NOT_FOUND);
 
       const isPasswordMatch = await bcrypt.compare(
         password,
         userExists.password,
       );
       if (!isPasswordMatch)
-        throwError('Invalid Credentials', HttpStatus.NOT_FOUND);
+        throw throwError('Invalid Credentials', HttpStatus.NOT_FOUND);
 
       // Return user without password
       const user = await this.prisma.user.findUnique({
@@ -83,7 +84,7 @@ export class AuthService {
       });
 
       // Generate JWT Token
-      const payload = { email: user.email, sub: user.id, role: user.role };
+      const payload = { email: user.email, id: user.id, role: user.role };
       const token = await this.jwtService.signAsync(payload);
 
       const cookieOptions = {
@@ -101,8 +102,20 @@ export class AuthService {
     }
   }
 
-  async logout(response: Response) {
+  async logout(request: Request, response: Response) {
     try {
+      if (!request.user.id)
+        throw throwError('Unauthorized', HttpStatus.UNAUTHORIZED);
+
+      const cookieOptions = {
+        sameSite: 'none' as 'none',
+        httpOnly: true,
+        secure: true,
+      };
+
+      response.clearCookie('token', cookieOptions);
+
+      return { message: 'Logged out successfully', success: true };
     } catch (error) {
       throw throwError(error.message, HttpStatus.BAD_REQUEST);
     }

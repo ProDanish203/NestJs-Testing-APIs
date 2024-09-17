@@ -25,16 +25,15 @@ export class AuthGuard implements CanActivate {
     const token = this.extractToken(request);
 
     if (!token) throw new UnauthorizedException('Unauthorized Access');
-    console.log(token);
+
     try {
       const payload = (await this.jwtService.verifyAsync(token, {
         secret: process.env.JWT_SECRET as string,
       })) as any;
-      console.log(payload);
 
       // Fetch user from Prisma
       const user = await this.prisma.user.findUnique({
-        where: { id: payload.sub },
+        where: { id: payload.id },
         select: { id: true, role: true, email: true, name: true },
       });
 
