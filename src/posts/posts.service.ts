@@ -8,7 +8,7 @@ import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class PostsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(req: Request, { content }: CreatePostDto) {
     try {
