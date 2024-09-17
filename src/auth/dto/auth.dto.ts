@@ -1,4 +1,3 @@
-export class CreateAuthDto {}
 import {
   IsEmail,
   IsEnum,
