@@ -36,7 +36,6 @@ export class AuthGuard implements CanActivate {
         where: { id: payload.id },
         select: { id: true, role: true, email: true, name: true },
       });
-
       if (!user) throw new UnauthorizedException('Unauthorized Access');
 
       const roles = this.reflector.get<Role[]>(ROLES_KEY, context.getHandler());

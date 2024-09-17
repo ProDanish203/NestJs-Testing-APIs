@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { throwError } from '../../common/helpers/helpers';
-import e, { Request } from 'express';
+import { Request } from 'express';
 import { PaginationInfo, QueryParams } from 'common/types/type';
 import { Prisma } from '@prisma/client';
 import { UpdateUserDto } from './dto/user.dto';
@@ -38,8 +38,8 @@ export class UsersService {
           },
           where,
           orderBy,
-          skip: (page - 1) * limit,
-          take: limit,
+          skip: (Number(page) - 1) * Number(limit),
+          take: Number(limit),
         }),
         this.prisma.user.count({ where }),
       ]);
